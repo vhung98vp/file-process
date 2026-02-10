@@ -13,7 +13,7 @@ def read_docx(path):
     for p in doc.paragraphs:
         if p.text.strip():
             text_lines.append(p.text.strip())
-    texts = [{"page": 0,  "text": text_lines}]
+    texts = [{"page": 0,  "text": text_lines}] if text_lines else []
 
     tables = []
     for table_idx, table in enumerate(doc.tables):
@@ -29,9 +29,9 @@ def read_docx(path):
 def read_txt(path):
     with open(path, encoding="utf-8", errors="ignore") as f:
         text_lines = [line.strip() for line in f if line.strip()]
-    texts = [{"page": 0,  "text": text_lines}]
+    texts = [{"page": 0,  "text": text_lines}] if text_lines else []
 
-    return texts, None
+    return texts, []
 
 
 def read_xlsx(path):
@@ -46,7 +46,7 @@ def read_xlsx(path):
                 tables.append({"page": page_idx, "table": 0, "cells": cells})
     except Exception as e:
         print(f"Error reading {path}: {e}")
-    return None, tables
+    return [], tables
 
 
 def read_csv(path):
@@ -60,8 +60,8 @@ def read_csv(path):
             else:
                 cells.append(row)
     
-    texts = [{"page": 0,  "text": text_lines}]
-    tables = [{"page": 0, "table": 0, "cells": cells}]
+    texts = [{"page": 0,  "text": text_lines}] if text_lines else []
+    tables = [{"page": 0, "table": 0, "cells": cells}] if cells else []
     return texts, tables
 
 

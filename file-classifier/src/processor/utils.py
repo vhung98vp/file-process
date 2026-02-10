@@ -47,8 +47,8 @@ def is_copyable_pdf_page(page, threshold=0.8):
 def process_copyable_pdf_page(page, page_idx):
     tables = []
     texts = []
-    text_lines = page.get_text("text").splitlines()
-    text_lines = [line for line in text_lines if line.strip()]
+    page_lines = page.get_text("text").splitlines()
+    text_lines = [line for line in page_lines if line.strip()]
             
     all_tables = page.find_tables()
     if all_tables.tables:
@@ -59,9 +59,9 @@ def process_copyable_pdf_page(page, page_idx):
         page.apply_redactions()
         rem_lines = page.get_text("text").splitlines()
         rem_texts = [line for line in rem_lines if line.strip()]
-        texts = [{"page": page_idx, "text": rem_texts}]
+        texts = [{"page": page_idx, "text": rem_texts}] if rem_texts else []
     else:
-        texts = [{"page": page_idx, "text": text_lines}]
+        texts = [{"page": page_idx, "text": text_lines}] if text_lines else []
     
     return texts, tables
 

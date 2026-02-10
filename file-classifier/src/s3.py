@@ -17,7 +17,7 @@ class S3Client:
             verify=False
         )
         self.bucket_name = conf.get('bucket_name')
-        self.upload_folder = conf.get('upload_folder')
+        self.upload_folder = conf.get('upload_folder', "")
 
     def is_file_exists(self, file_key):
         try:
@@ -42,9 +42,13 @@ class S3Client:
         try:
             file_name = os.path.basename(file_key)
             current_date = datetime.now().strftime("%Y%m%d")
-            download_path = os.path.join(APP["shared_path"], current_date, file_name)
-            with open(download_path, 'wb') as f:
-                self.s3.download_fileobj(self.bucket_name, file_key, f)
+            download_dir = os.path.join(APP["shared_path"], current_date)
+            download_path = os.path.join(download_dir, file_name)
+            os.makedirs(download_dir, exist_ok=True)
+            
+            self.s3.download_file(self.bucket_name, file_key, download_path)
+            # with open(download_path, 'wb') as f:
+            #     self.s3.download_fileobj(self.bucket_name, file_key, f)
             return download_path
         except Exception as e:
             raise Exception(f"Error downloading file {file_key} from S3: {e}")

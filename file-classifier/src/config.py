@@ -19,8 +19,8 @@ def get_logger(name):
 
 APP = {
     'shared_path': os.environ.get('SHARED_PATH', '/tmp/appdata'),
-    # 'doc_id_key': os.environ.get('DOC_ID_FIELD', '_fs_internal_id'),
-    # 'doc_entity_type': os.environ.get('DOC_ENTITY_TYPE', 'fs.entity.Document'),
+    'doc_id_key': os.environ.get('DOC_ID_FIELD', '_fs_internal_id'),
+    'doc_entity_type': os.environ.get('DOC_ENTITY_TYPE', 'fs.entity.Document'),
     'namespace_uuid': uuid.UUID(os.environ.get('NAMESPACE_UUID', "6ba7b810-9dad-11d1-80b4-00c04fd430c8")),
     'min_img_size': int(os.environ.get('MIN_IMG_SIZE', 50)),
 }

@@ -3,7 +3,7 @@ import csv
 import pandas as pd
 from docx import Document
 import fitz
-from utils import convert_to_new_format, is_copyable_pdf_page, process_copyable_pdf_page, extract_image
+from .utils import convert_to_new_format, is_copyable_pdf_page, process_copyable_pdf_page, extract_image
 
 
 

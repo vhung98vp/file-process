@@ -22,13 +22,16 @@ def process_s3_file(key):
         texts, tables, images = read_file(local_file_path)
 
         # Send text to kafka
-        send_output_to_kafka({"file_id": file_id, "path": key, "texts": texts}, KAFKA["result_text_topic"])
+        if texts:
+            send_output_to_kafka({"file_id": file_id, "path": key, "texts": texts}, KAFKA["result_text_topic"])
 
-        # Send content to kafka
-        send_output_to_kafka({"file_id": file_id, "path": key, "tables": tables}, KAFKA["result_table_topic"])
+        # Send tables to kafka
+        if tables:
+            send_output_to_kafka({"file_id": file_id, "path": key, "tables": tables}, KAFKA["result_table_topic"])
 
         # Send image local path to kafka
-        send_output_to_kafka({"file_id": file_id, "path": key, "images": images}, KAFKA["input_image_topic"])
+        if images:
+            send_output_to_kafka({"file_id": file_id, "path": key, "images": images}, KAFKA["input_image_topic"])
 
         return file_id
     except Exception as e:
@@ -105,7 +108,7 @@ def start_kafka_consumer():
         logger.info(f"Processed {processed_count} messages with {error_count} errors.")
 
 
-def send_output_to_kafka(result, topic=KAFKA['output_topic']):
+def send_output_to_kafka(result, topic):
     try:
         producer.produce(topic, key=str(uuid.uuid4()), value=json.dumps(result, ensure_ascii=False))
         producer.poll(0)

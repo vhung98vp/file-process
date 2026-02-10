@@ -79,6 +79,8 @@ def write_bytes(data, out_dir, file_name):
 
 def get_full_path_dir(dir):
     paths = os.listdir(dir)
+    if not paths:
+        os.rmdir(dir)
     return [os.path.join(dir, path) for path in paths]
 
 

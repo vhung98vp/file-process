@@ -15,7 +15,7 @@ consumer = Consumer(KAFKA_CONSUMER_CONFIG)
 consumer.subscribe([KAFKA['input_file_topic']])
 
 
-def process_s3_file(key):
+def process_s3_file(key, detect_type=0):
     try:
         local_file_path = RClient.download_file(key)
         file_id = build_doc_uid(key)

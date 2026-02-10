@@ -3,7 +3,6 @@ import os
 import re
 import zipfile
 import fitz
-import numpy as np
 import imagesize
 import io
 import subprocess
@@ -77,18 +76,24 @@ def write_bytes(data, out_dir, file_name):
         with open(out_path, "wb") as f:
             f.write(data)
 
+
+def get_full_path_dir(dir):
+    paths = os.listdir(dir)
+    return [os.path.join(dir, path) for path in paths]
+
+
 def extract_image(path, readable_content=True):
     ext = os.path.splitext(path)[1].lower()
     if ext in [".jpg", ".jpeg", ".jp2", ".png", ".bmp", ".webp"]:
         return [path]
     
-    if ext not in ["docx", "xlsx", "pdf"]:
-        return None
+    if ext not in [".docx", ".xlsx", ".pdf"]:
+        return []
     
     out_dir = f"{path}_imgs"
     os.makedirs(out_dir, exist_ok=True)
     
-    if ext in ["docx", "xlsx"]:
+    if ext in [".docx", ".xlsx"]:
         with zipfile.ZipFile(path) as z:
             for name in z.namelist():
                 if name.startswith("word/media/") or name.startswith("xl/media/"):
@@ -111,4 +116,4 @@ def extract_image(path, readable_content=True):
                     page_path = os.path.join(out_dir, f"page_{page_idx}.png")
                     pix = page.get_pixmap(dpi=300)
                     pix.save(page_path)
-    return os.listdir(out_dir)
+    return get_full_path_dir(out_dir)

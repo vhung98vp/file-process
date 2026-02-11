@@ -2,8 +2,8 @@ import json
 import time
 import uuid
 from confluent_kafka import Consumer, Producer
-from config import get_logger, KAFKA, KAFKA_CONSUMER_CONFIG, KAFKA_PRODUCER_CONFIG, APP
-from processor.file_reader import read_file
+from config import get_logger, KAFKA, KAFKA_CONSUMER_CONFIG, KAFKA_PRODUCER_CONFIG
+from processor import read_file
 from processor.utils import build_doc_uid
 from s3 import RClient
 logger = get_logger(__name__)
@@ -15,7 +15,7 @@ consumer = Consumer(KAFKA_CONSUMER_CONFIG)
 consumer.subscribe([KAFKA['input_file_topic']])
 
 
-def process_s3_file(key, detect_type=0):
+def process_s3_file(key):
     try:
         local_file_path = RClient.download_file(key)
         file_id = build_doc_uid(key)
@@ -45,21 +45,21 @@ def process_message(msg_key, msg):
         data = json.loads(msg)
         folder = data.get("folder")
         file_key = data.get("file")
-        detect_type = data.get("type", '0')
-        if detect_type not in ['0', '1', '2', '3']:
-            raise ValueError(f"Invalid input type: {data}")
+        # detect_type = data.get("type", '0')
+        # if detect_type not in ['0', '1', '2', '3']:
+        #     raise ValueError(f"Invalid input type: {data}")
         if folder:
             processed = []
             file_keys = RClient.list_files(folder)
             for file_key in file_keys:
-                file_id = process_s3_file(file_key, int(detect_type))
+                file_id = process_s3_file(file_key)
                 if file_id:
                     processed.append(file_id)
             if processed:
                 send_output_to_kafka({"folder": folder, "processed_files": processed}, KAFKA["complete_topic"])
                 logger.info(f"Processed folder: {folder}.")
         elif file_key:
-            process_s3_file(file_key, int(detect_type))
+            process_s3_file(file_key)
             logger.info(f"Processed file: {file_key}.")
         else:
             raise ValueError(f"Invalid input file/folder: {data}")

@@ -111,7 +111,7 @@ def extract_image(path, readable_content=True):
                         img_base = pages.extract_image(img_info[0])
                         data = img_base["image"]
                         ext = img_base["ext"]
-                        write_bytes(data, out_dir, f"page{page_idx}_img{img_idx}.{ext}")
+                        write_bytes(data, out_dir, f"page_{page_idx}_img_{img_idx}.{ext}")
         else:
             with fitz.open(path) as pages:
                 for page_idx, page in enumerate(pages):

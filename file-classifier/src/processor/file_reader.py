@@ -3,8 +3,7 @@ import csv
 import pandas as pd
 from docx import Document
 import fitz
-from .utils import convert_to_new_format, is_copyable_pdf_page, process_copyable_pdf_page, extract_image
-
+from .utils import is_copyable_pdf_page, process_copyable_pdf_page
 
 
 def read_docx(path):
@@ -77,24 +76,3 @@ def read_pdf(path):
 
     return texts, tables
 
-
-def read_file(file_path):
-    ext = os.path.splitext(file_path)[1].lower()
-    file_path = convert_to_new_format(file_path)
-
-    if ext in [".doc", ".docx"]:
-        pages = read_docx(file_path)
-    elif ext == ".txt":
-        pages = read_txt(file_path)
-    elif ext in [".xls", ".xlsx"]:
-        pages = read_xlsx(file_path)
-    elif ext == ".csv":
-        pages = read_csv(file_path)
-    elif ext == ".pdf":
-        pages = read_pdf(file_path)
-    else:
-        pages = []
-    
-    readable = len(pages[0]) + len(pages[1]) > 0
-    images = extract_image(file_path, readable)
-    return pages[0], pages[1], images

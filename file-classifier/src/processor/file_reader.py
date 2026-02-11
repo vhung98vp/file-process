@@ -12,7 +12,7 @@ def read_docx(path):
     for p in doc.paragraphs:
         if p.text.strip():
             text_lines.append(p.text.strip())
-    texts = [{"page": 0,  "text": text_lines}] if text_lines else []
+    texts = [{"text": text_lines}] if text_lines else []
 
     tables = []
     for table_idx, table in enumerate(doc.tables):
@@ -20,7 +20,7 @@ def read_docx(path):
         for row in table.rows:
             row_text = [cell.text.strip() for cell in row.cells]
             table_data.append(row_text)
-        tables.append({"page": 0, "table": table_idx, "cells": table_data})
+        tables.append({"table": table_idx, "cells": table_data})
     
     return texts, tables
 
@@ -28,7 +28,7 @@ def read_docx(path):
 def read_txt(path):
     with open(path, encoding="utf-8", errors="ignore") as f:
         text_lines = [line.strip() for line in f if line.strip()]
-    texts = [{"page": 0,  "text": text_lines}] if text_lines else []
+    texts = [{"text": text_lines}] if text_lines else []
 
     return texts, []
 
@@ -59,8 +59,8 @@ def read_csv(path):
             else:
                 cells.append(row)
     
-    texts = [{"page": 0,  "text": text_lines}] if text_lines else []
-    tables = [{"page": 0, "table": 0, "cells": cells}] if cells else []
+    texts = [{"text": text_lines}] if text_lines else []
+    tables = [{"table": 0, "cells": cells}] if cells else []
     return texts, tables
 
 
